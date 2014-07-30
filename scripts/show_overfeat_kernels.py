@@ -1,3 +1,11 @@
+'''
+    This script visualizes the convolutional kernels of the first
+    layer of an OverFeat network.
+    Run this script in the overfeat-from-python directory with
+    # PYTHONPATH=$PYTHONPATH:. python scripts/show_overfeat_kernels.py
+    Note that you must have downloaded the OverFeat model data!
+'''
+
 import numpy as np
 import matplotlib.pyplot as plt
 import math
