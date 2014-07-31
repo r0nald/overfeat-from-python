@@ -1,7 +1,15 @@
 import numpy as np
+import os
+import warnings
+
 
 def _float_arr_from_file(filepath):
     return np.fromfile(filepath, dtype=np.float32)
+
+
+def _file_size(filepath):
+    return os.stat(filepath).st_size
+
 
 def load_tensors(data_path, model_nr):
     '''
@@ -60,15 +68,22 @@ def load_tensors(data_path, model_nr):
     filepath = data_path + '/net_weight_' + str(model_nr)
     tensor_as_array = _float_arr_from_file(filepath)
 
+    model_file_size = _file_size(filepath)
+    if tensor_as_array.nbytes != model_file_size:
+        warnings.warn('Loaded array size %ul and file size %ul '
+                      ' dont match!' % (tensor_as_array.nbytes,
+                                        model_file_size))
+
+
     tensors = []
     tensor_start_index = 0
 
     for tensor_idx in range(len(tensor_shapes)):
-        tensor_size = reduce(lambda a,b: a*b,
+        tensor_size = reduce(lambda a, b: a*b,
                              tensor_shapes[tensor_idx])
-        tensors.append(np.reshape(tensor_as_array[tensor_start_index
-                                                  :tensor_start_index
-                                                  +tensor_size],
+        tensors.append(np.reshape(tensor_as_array[tensor_start_index:
+                                                  tensor_start_index
+                                                  + tensor_size],
                                   tensor_shapes[tensor_idx]))
         tensor_start_index = tensor_size
 
